@@ -4,36 +4,6 @@ import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport } from '@
 import { policySpecificPvtCar } from './Data/data';
 import { Button } from '@mui/material';
 
-
-const handleAddRow = () => {
-    setRows((prevRows) => [...prevRows, createRandomRow()]);
-};
-
-const createRandomRow = () => {
-    idCounter += 1;
-    return {
-        id: idCounter,
-        "Policy Wise": "9421344565",
-        "Client Name": "Nishant",
-        "Premium": null,
-        "Producer Code": "1200070028",
-        "Producer Name": "NEETA TOLANI H",
-        "Producer PAN": "ACIPG0116H",
-        "Channel": "Agency",
-        "Sub-Channel": "Agency",
-        "Branch Location": "Mumbai",
-        "Location Category": "Top 20",
-        "Prodcom Month": 44834.0,
-        "LOB1": "All",
-        "Business Type": "Roll Over",
-        "Segment": "All",
-        "SectionText": "SAOD",
-        "Approval Grid for OD Portion": 0.0,
-        "Approval Grid for TP Portion": 0.0,
-        "Approval Grid for Per Policy ": 0.0,
-    };
-};
-
 const PremiumCell = ({ value, index, row, column }) => {
     if (!/^\d{10}$/.test(value)) {
         return <span style={{ color: 'red' }}>{value}</span>;
@@ -200,20 +170,20 @@ const handleEdit=(params)=>{
 
 }
 export default function ValueGetterGrid() {
+    
+const [tableData, settableData] = React.useState(policySpecificPvtCar)
+
     return (
         <Box sx={{
             height: 400,
             width: '100%',
         }}>
             <DataGrid
-                rows={policySpecificPvtCar}
+                rows={tableData}
                 columns={columns}
                 slots={{ toolbar: CustomToolbar, }}
                 isCellEditable={(params) =>handleEdit(params)}
             />
-            <Button size="small" onClick={handleAddRow}>
-                Add a row
-            </Button>
         </Box>
     );
 }
