@@ -33,6 +33,7 @@ const createRandomRow = () => {
         "Approval Grid for Per Policy ": 0.0,
     };
 };
+
 const PremiumCell = ({ value, index, row, column }) => {
     if (!/^\d{10}$/.test(value)) {
         return <span style={{ color: 'red' }}>{value}</span>;
@@ -195,6 +196,9 @@ const columns: GridColDef[] = [
         renderCell: cellValidator
     }
 ];
+const handleEdit=(params)=>{
+
+}
 export default function ValueGetterGrid() {
     return (
         <Box sx={{
@@ -205,6 +209,7 @@ export default function ValueGetterGrid() {
                 rows={policySpecificPvtCar}
                 columns={columns}
                 slots={{ toolbar: CustomToolbar, }}
+                isCellEditable={(params) =>handleEdit(params)}
             />
             <Button size="small" onClick={handleAddRow}>
                 Add a row
