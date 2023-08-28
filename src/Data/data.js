@@ -23,7 +23,7 @@ export const policySpecificPvtCar = [
     {
         "id":2,
         "Policy Wise": "6200535139",
-        "Client Name": null,
+        "Date": null,
         "Premium": null,
         "Producer Code": "1200070028",
         "Producer Name": "PROBUS INSURANCE BROKER PRIVATE LIMITED",
@@ -44,7 +44,7 @@ export const policySpecificPvtCar = [
     {
         "id":3,
         "Policy Wise": "3102037961",
-        "Client Name": null,
+        "Date": null,
         "Premium": null,
         "Producer Code": "1200070028",
         "Producer Name": "PROBUS INSURANCE BROKER PRIVATE LIMITED",

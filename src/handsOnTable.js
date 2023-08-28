@@ -7,24 +7,35 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // register Handsontable's modules  
 registerAllModules();
+
+
+
+// const ScoreRenderer = (props) => {
+//     const { value } = props;
+//     const color = value > 60 ? '#2ECC40' : '#FF4136';
+//     return (
+//         <span style={{ color }}>{value}</span>
+//     );
+// };
+
+
 function App1() {
     const hotRef = useRef(null);
     const [output, setOutput] = useState('Data will load from server');
-    const [isAutosave, setIsAutosave] = useState(false);
+    // const [isAutosave, setIsAutosave] = useState(false);
 
     const columnHeaders = Object.keys(policySpecificPvtCar[0]);
-
     let buttonClickCallback;
     let saveClickCallback;
 
-    const autosaveClickCallback = (event) => {
-        setIsAutosave(event.target.checked);
-        if (event.target.checked) {
-            setOutput('Changes will be autosaved');
-        } else {
-            setOutput('Changes will not be autosaved');
-        }
-    };
+    // const autosaveClickCallback = (event) => {
+    //     setIsAutosave(event.target.checked);
+    //     if (event.target.checked) {
+    //         setOutput('Changes will be autosaved');
+    //     } else {
+    //         setOutput('Changes will not be autosaved');
+    //     }
+    // };
 
 
     useEffect(() => {
@@ -62,7 +73,7 @@ function App1() {
                 });
         };
 
-        
+
 
     });
     return (
@@ -70,32 +81,32 @@ function App1() {
             <HotTable
                 ref={hotRef}
                 data={policySpecificPvtCar}
-                minSpareRows={1}
+                // minSpareRows={1}
                 rowHeaders={true}
                 colHeaders={columnHeaders}
-                contextMenu={true}
-                filters={true}
-                columnSorting={true}
-                dropdownMenu={['filter_by_condition', 'filter_by_value', 'filter_action_bar']}
-                customBorders={true}
                 columns={[
                     {
-                        "data": "Id",
-                        "readOnly": true,
+                        "data": "id",
+                        "readOnly": false,
                     },
                     {
                         "data": "Policy Wise",
                         "readOnly": false,
                         "isRequired": true,
                         "type": 'numeric',
+                        // renderer: ScoreRenderer,
+                        allowEmpty: false
                     },
                     {
-                        "data": "Client Name",
-                        "readOnly": true
+                        "data": "Date",
+                        "readOnly": false,
+                        type: 'date',
+                        dateFormat: 'DD/MM/YYYY',
+                        correctFormat: true,
                     },
                     {
                         "data": "Premium",
-                        "readOnly": true
+                        "readOnly": false,
                     },
                     {
                         "data": "Producer Code",
@@ -131,35 +142,46 @@ function App1() {
                     },
                     {
                         "data": "LOB1",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'dropdown',
+                        source: ["pvtCar", "CV", "TW"]
                     },
                     {
                         "data": "Business Type",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'dropdown',
+                        source: ["Brand New", "Roll Over", "Renewal"]
                     },
                     {
                         "data": "Segment",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'dropdown',
+                        source: ["Compact", "Mpv_Suv", "Mid_Size", "Ultra_High_En_Min", "High_End", "Quadricycle",]
                     },
                     {
                         "data": "Section Text",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'dropdown',
+                        source: ["Package", "SAOD", "SATP"]
                     },
                     {
                         "data": "(Policy Type)",
-                        "readOnly": true
+                        "readOnly": false,
                     },
                     {
                         "data": "Approval Grid for OD Portion",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'numeric'
                     },
                     {
                         "data": "Approval Grid for TP Portion",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'numeric'
                     },
                     {
                         "data": "Approval Grid for Per Policy ",
-                        "readOnly": true
+                        "readOnly": false,
+                        type: 'numeric'
                     }
                 ]
                 }
