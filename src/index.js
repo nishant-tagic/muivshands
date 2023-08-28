@@ -9,6 +9,6 @@ root.render(
   <React.StrictMode>
     <App />
     <ValueGetterGrid />
-    <App1 />fabClasses
+    <App1 />
   </React.StrictMode>
 );
