@@ -8,17 +8,6 @@ import React, { useEffect, useRef, useState } from 'react';
 // register Handsontable's modules  
 registerAllModules();
 
-
-
-// const ScoreRenderer = (props) => {
-//     const { value } = props;
-//     const color = value > 60 ? '#2ECC40' : '#FF4136';
-//     return (
-//         <span style={{ color }}>{value}</span>
-//     );
-// };
-
-
 function App1() {
     const hotRef = useRef(null);
     const [output, setOutput] = useState('Data will load from server');
@@ -27,16 +16,6 @@ function App1() {
     const columnHeaders = Object.keys(policySpecificPvtCar[0]);
     let buttonClickCallback;
     let saveClickCallback;
-
-    // const autosaveClickCallback = (event) => {
-    //     setIsAutosave(event.target.checked);
-    //     if (event.target.checked) {
-    //         setOutput('Changes will be autosaved');
-    //     } else {
-    //         setOutput('Changes will not be autosaved');
-    //     }
-    // };
-
 
     useEffect(() => {
         const hot = hotRef.current?.hotInstance;

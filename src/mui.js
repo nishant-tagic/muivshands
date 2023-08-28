@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { policySpecificPvtCar } from './Data/data';
 // import { Button } from '@mui/material';
 
@@ -39,12 +39,7 @@ function CustomToolbar() {
     );
 }
 
-const isSectionTextSAOD = (params) => {
-    const value = params.row.SectionText;
-    return Boolean(value !== 'SAOD');
-};
-
-const columns: GridColDef[] = [
+const columns = [
     {
         field: 'Policy Wise',
         headerName: 'Policy Wise',
@@ -144,7 +139,7 @@ const columns: GridColDef[] = [
         field: 'Approval Grid for OD Portion',
         headerName: 'Approval Grid for OD Portion',
         width: 130,
-        editable: isSectionTextSAOD,
+        editable: true,
         type: 'number',
         renderCell: cellValidator,
     },
@@ -166,12 +161,9 @@ const columns: GridColDef[] = [
         renderCell: cellValidator
     }
 ];
-const handleEdit=(params)=>{
-
-}
 export default function ValueGetterGrid() {
     
-// const [tableData, settableData] = React.useState(policySpecificPvtCar)
+const [tableData, settableData] = React.useState(policySpecificPvtCar)
 
     return (
         <Box sx={{
@@ -179,10 +171,9 @@ export default function ValueGetterGrid() {
             width: '100%',
         }}>
             <DataGrid
-                rows={policySpecificPvtCar}
+                rows={tableData}
                 columns={columns}
                 slots={{ toolbar: CustomToolbar, }}
-                isCellEditable={(params) =>handleEdit(params)}
             />
         </Box>
     );
