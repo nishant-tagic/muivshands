@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { policySpecificPvtCar } from './Data/data';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 
 const PremiumCell = ({ value, index, row, column }) => {
     if (!/^\d{10}$/.test(value)) {
@@ -171,7 +171,7 @@ const handleEdit=(params)=>{
 }
 export default function ValueGetterGrid() {
     
-const [tableData, settableData] = React.useState(policySpecificPvtCar)
+// const [tableData, settableData] = React.useState(policySpecificPvtCar)
 
     return (
         <Box sx={{
@@ -179,7 +179,7 @@ const [tableData, settableData] = React.useState(policySpecificPvtCar)
             width: '100%',
         }}>
             <DataGrid
-                rows={tableData}
+                rows={policySpecificPvtCar}
                 columns={columns}
                 slots={{ toolbar: CustomToolbar, }}
                 isCellEditable={(params) =>handleEdit(params)}
