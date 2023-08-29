@@ -1,8 +1,8 @@
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, useGridApiContext, GridEditSingleSelectCell, GridToolbarExport } from '@mui/x-data-grid';
 import { policySpecificPvtCar } from './Data/data';
-// import { Button } from '@mui/material';
 
 const PremiumCell = ({ value, index, row, column }) => {
     if (!/^\d{10}$/.test(value)) {
@@ -31,6 +31,17 @@ const cellValidator = ({ value, index, row, column }) => {
     }
 };
 
+const isCellEditable = (params) => {
+    if (
+        params.field === 'Approval Grid for OD Portion' &&
+        params.row.SectionText === 'SAOD'
+    ) {
+        return false;
+    }
+    return true;
+};
+
+
 function CustomToolbar() {
     return (
         <GridToolbarContainer>
@@ -39,13 +50,28 @@ function CustomToolbar() {
     );
 }
 
+function CustomTypeEditComponent(props) {
+    const apiRef = useGridApiContext();
+
+    const handleValueChange = async () => {
+        await apiRef.current.setEditCellValue({
+            id: props.id,
+            field: 'Approval Grid for OD Portion',
+            value: '',
+        });
+    };
+
+    return <GridEditSingleSelectCell onValueChange={handleValueChange} {...props} />;
+}
+
 const columns = [
     {
         field: 'Policy Wise',
         headerName: 'Policy Wise',
         width: 130,
-        editable: true,
+        editable: "true",
         renderCell: PremiumCell,
+
     },
     {
         field: 'Client Name',
@@ -133,24 +159,27 @@ const columns = [
         width: 130,
         editable: true,
         type: "singleSelect",
-        valueOptions: ["Package", "SAOD", "SATP"]
+        valueOptions: ["Package", "SAOD", "SATP"],
+        renderEditCell: (params) => <CustomTypeEditComponent {...params} />,
     },
     {
         field: 'Approval Grid for OD Portion',
         headerName: 'Approval Grid for OD Portion',
         width: 130,
-        editable: true,
         type: 'number',
         renderCell: cellValidator,
+        editable: ({ params }) => {
+            return params.row.type === 'SAOD' ? true : false;
+        },
     },
-
     {
         field: 'Approval Grid for TP Portion',
         headerName: 'Approval Grid for TP Portion',
         width: 130,
-        editable: true,
+        renderCell: cellValidator,
         type: 'number',
-        renderCell: cellValidator
+        editable: true,
+
     },
     {
         field: 'Approval Grid for Per Policy ',
@@ -158,22 +187,23 @@ const columns = [
         width: 130,
         editable: true,
         type: 'number',
-        renderCell: cellValidator
+        renderCell: cellValidator,
     }
 ];
+
 export default function ValueGetterGrid() {
-    
-const [tableData, settableData] = React.useState(policySpecificPvtCar)
 
     return (
         <Box sx={{
-            height: 400,
+            height: 500,
             width: '100%',
         }}>
             <DataGrid
-                rows={tableData}
+                rows={policySpecificPvtCar}
                 columns={columns}
                 slots={{ toolbar: CustomToolbar, }}
+                editMode="row"
+                isCellEditable={isCellEditable}
             />
         </Box>
     );
