@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-undef */
 export const policySpecificPvtCar = [
     {
         "id":1,

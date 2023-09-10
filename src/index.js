@@ -1,16 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import ValueGetterGrid from '/Users/nishant/Desktop/Tagic/vms/grid component/muigrid/my-app/src/mui.js';
-import App1 from './handsOnTable';
-import FullFeaturedCrudGrid from '/Users/nishant/Desktop/Tagic/vms/grid component/muigrid/my-app/src/demo.tsx';
+// import App from './App';
+import ValueGetterGrid from '/Users/nbhagat3/Desktop/muivshands/src/mui.tsx';
+// import App1 from './handsOnTable';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
     <ValueGetterGrid />
-    <App1 />
-    <FullFeaturedCrudGrid />
+    {/* <App1 /> */}
+    {/* <FullFeaturedCrudGrid /> */}
   </React.StrictMode>
 );
