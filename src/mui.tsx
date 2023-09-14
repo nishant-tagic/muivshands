@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import { GridActionsCellItem, GridCellModes, GridCellModesModel, GridCellParams, GridRenderCellParams, GridRowId, GridRowModes, GridRowModesModel, GridRowsProp } from '@mui/x-data-grid';
 import { DataGrid, GridToolbarContainer, GridColDef } from '@mui/x-data-grid';
-import { policySpecificPvtCar } from './Data/data';
+import { policySpecificPvtCar, policy } from './Data/data';
 import { Button } from '@mui/material';
 import { randomId } from '@mui/x-data-grid-generator';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -130,7 +130,21 @@ export default function policyDataGrid() {
         [],
     );
 
-//TODO:change it to config driven
+    const handlePolicyNumberChange = (event) => {
+        const newValue = event.target.value;
+
+        // Check if the entered value is a valid 10-digit policy number
+        if (newValue) {
+            // Update the corresponding cells with data from the policy object
+            const updatedRows = rows.map((row) => {
+                return { ...row, ...policy };
+            });
+
+            setRows(updatedRows);
+        }
+    };
+
+    //TODO:change it to config driven
     const columns: GridColDef[] = [
         {
             field: 'Policy Wise',
@@ -138,6 +152,13 @@ export default function policyDataGrid() {
             width: 130,
             editable: true,
             renderCell: tenDigitValidator,
+            renderEditCell: (params) => (
+                <input
+                    type="text"
+                    value={params.value || ""}
+                    onChange={handlePolicyNumberChange}
+                />
+            ),
         },
         {
             field: 'Client Name',
@@ -276,7 +297,7 @@ export default function policyDataGrid() {
     ];
 
     return (
-        <Box sx={{ width: '100%' } }>
+        <Box sx={{ width: '100%' }}>
             <Box
                 sx={{
                     height: 650,
@@ -307,13 +328,18 @@ export default function policyDataGrid() {
 
                 />
             </Box>
-            <Box >
-                <Button
-                    variant="contained"
-                >
-                    submit
-                </Button>
-            </Box>
+            <Button
+                variant="contained"
+                
+                style={{
+                    position: "absolute",
+                    padding: "10px 50px",
+                    margin: "68",
+                    right: "10px",
+                }}
+            >
+                Submit
+            </Button>
 
         </Box>
     );
