@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
-import { GridActionsCellItem, GridCellModes, GridCellModesModel, GridCellParams, GridRenderCellParams, GridRowId, GridRowModes, GridRowModesModel, GridRowsProp } from '@mui/x-data-grid';
+import { GridActionsCellItem, GridCellModes, GridCellModesModel, GridCellParams, GridRenderCellParams, GridRowId, GridRowModes, GridRowModesModel, GridRowsProp, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton } from '@mui/x-data-grid';
 import { DataGrid, GridToolbarContainer, GridColDef } from '@mui/x-data-grid';
 import { policySpecificPvtCar, policy } from './Data/data';
 import { Button } from '@mui/material';
@@ -62,6 +62,9 @@ function EditToolbar(props: EditToolbarProps) {
             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
                 Add record
             </Button>
+            <GridToolbarColumnsButton />
+            <GridToolbarFilterButton />
+            <GridToolbarDensitySelector />
         </GridToolbarContainer>
     );
 }
@@ -143,6 +146,7 @@ export default function policyDataGrid() {
             setRows(updatedRows);
         }
     };
+
 
     //TODO:change it to config driven
     const columns: GridColDef[] = [
@@ -296,6 +300,17 @@ export default function policyDataGrid() {
         },
     ];
 
+    function camelCaseToNormalText(inputString) {
+        return inputString.replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
+
+    columns.map(function (element) {
+        const len = element.field.length;
+        element.width = len * 10;
+        element.headerName = camelCaseToNormalText(element.field)
+        return element; // Return the modified element
+    });
+
     return (
         <Box sx={{ width: '100%' }}>
             <Box
@@ -318,6 +333,7 @@ export default function policyDataGrid() {
                     editMode="row"
                     columnBuffer={Number.MAX_SAFE_INTEGER}
                     columnThreshold={2}
+                    getRowHeight={() => 'auto'}
                     cellModesModel={cellModesModel}
                     onCellModesModelChange={handleCellModesModelChange}
                     onCellClick={handleCellClick}
@@ -330,7 +346,7 @@ export default function policyDataGrid() {
             </Box>
             <Button
                 variant="contained"
-                
+
                 style={{
                     position: "absolute",
                     padding: "10px 50px",
