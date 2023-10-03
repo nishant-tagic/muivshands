@@ -1,42 +1,73 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import { GridActionsCellItem, GridCellModes, GridCellModesModel, GridCellParams, GridRenderCellParams, GridRowId, GridRowModes, GridRowModesModel, GridRowsProp, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton } from '@mui/x-data-grid';
-import { DataGrid, GridToolbarContainer, GridColDef } from '@mui/x-data-grid';
-import { policySpecificPvtCar, policy } from './Data/data';
-import { Button } from '@mui/material';
-import { randomId } from '@mui/x-data-grid-generator';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Close';
+import {
+    GridRowsProp,
+    GridRowModesModel,
+    GridRowModes,
+    DataGrid,
+    GridColDef,
+    GridToolbarContainer,
+    GridActionsCellItem,
+    GridEventListener,
+    GridRowId,
+    GridRowModel,
+    GridRowEditStopReasons,
+} from '@mui/x-data-grid';
+import {
+    randomCreatedDate,
+    randomTraderName,
+    randomId,
+    randomArrayItem,
+} from '@mui/x-data-grid-generator';
 
-// Functions------------------------------------------------------------
-const tenDigitValidator = ({ value }: GridRenderCellParams<any, any, any, any>) => {
-    if (!/^\d{10}$/.test(value)) {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    } else {
-        return <span>{value}</span>;
-    }
+const roles = ['Market', 'Finance', 'Development'];
+const randomRole = () => {
+    return randomArrayItem(roles);
 };
 
-const freePositiveNumber = ({ value }: GridRenderCellParams<any, any, any, any>) => {
-    if (/^[1-9]\d*$/.test(value)) {
-        return value;
-    } else {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    }
-};
-
-const valueBetweenZeroToHundred = ({ value }: GridRenderCellParams<any, any, any, any>) => {
-    const min = 0;
-    const max = 100;
-
-    if (value < min || value > max) {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    } else {
-        return value;
-    }
-};
+const initialRows: GridRowsProp = [
+    {
+        id: randomId(),
+        name: randomTraderName(),
+        age: 25,
+        joinDate: randomCreatedDate(),
+        role: randomRole(),
+    },
+    {
+        id: randomId(),
+        name: randomTraderName(),
+        age: 36,
+        joinDate: randomCreatedDate(),
+        role: randomRole(),
+    },
+    {
+        id: randomId(),
+        name: randomTraderName(),
+        age: 19,
+        joinDate: randomCreatedDate(),
+        role: randomRole(),
+    },
+    {
+        id: randomId(),
+        name: randomTraderName(),
+        age: 28,
+        joinDate: randomCreatedDate(),
+        role: randomRole(),
+    },
+    {
+        id: randomId(),
+        name: randomTraderName(),
+        age: 23,
+        joinDate: randomCreatedDate(),
+        role: randomRole(),
+    },
+];
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -62,222 +93,79 @@ function EditToolbar(props: EditToolbarProps) {
             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
                 Add record
             </Button>
-            <GridToolbarColumnsButton />
-            <GridToolbarFilterButton />
-            <GridToolbarDensitySelector />
         </GridToolbarContainer>
     );
 }
-//----------------------------------------------------------------------
 
-//TODO:change it to config driven
-const initialRows: GridRowsProp = policySpecificPvtCar;
-
-export default function policyDataGrid() {
-
+export default function FullFeaturedCrudGrid() {
     const [rows, setRows] = React.useState(initialRows);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
+
+    const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    const handleEditClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    };
 
     const handleDeleteClick = (id: GridRowId) => () => {
         setRows(rows.filter((row) => row.id !== id));
     };
 
-    const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
+    const handleCancelClick = (id: GridRowId) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
+        });
 
-    const handleCellClick = React.useCallback(
-        (params: GridCellParams, event: React.MouseEvent) => {
-            if (!params.isEditable) {
-                return;
-            }
-
-            // Ignore portal
-            if (!event.currentTarget.contains(event.target as Element)) {
-                return;
-            }
-
-            setCellModesModel((prevModel) => {
-                return {
-                    // Revert the mode of the other cells from other rows
-                    ...Object.keys(prevModel).reduce(
-                        (acc, id) => ({
-                            ...acc,
-                            [id]: Object.keys(prevModel[id]).reduce(
-                                (acc2, field) => ({
-                                    ...acc2,
-                                    [field]: { mode: GridCellModes.View },
-                                }),
-                                {},
-                            ),
-                        }),
-                        {},
-                    ),
-                    [params.id]: {
-                        // Revert the mode of other cells in the same row
-                        ...Object.keys(prevModel[params.id] || {}).reduce(
-                            (acc, field) => ({ ...acc, [field]: { mode: GridCellModes.View } }),
-                            {},
-                        ),
-                        [params.field]: { mode: GridCellModes.Edit },
-                    },
-                };
-            });
-        },
-        [],
-    );
-
-    const handleCellModesModelChange = React.useCallback(
-        (newModel: GridCellModesModel) => {
-            setCellModesModel(newModel);
-        },
-        [],
-    );
-
-    const handlePolicyNumberChange = (event) => {
-        const newValue = event.target.value;
-
-        // Check if the entered value is a valid 10-digit policy number
-        if (newValue) {
-            // Update the corresponding cells with data from the policy object
-            const updatedRows = rows.map((row) => {
-                return { ...row, ...policy };
-            });
-
-            setRows(updatedRows);
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow!.isNew) {
+            setRows(rows.filter((row) => row.id !== id));
         }
     };
 
+    const processRowUpdate = (newRow: GridRowModel) => {
+        const updatedRow = { ...newRow, isNew: false };
+        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        return updatedRow;
+    };
 
-    //TODO:change it to config driven
+    const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+        setRowModesModel(newRowModesModel);
+    };
+
     const columns: GridColDef[] = [
+        { field: 'name', headerName: 'Name', width: 180, editable: true },
         {
-            field: 'Policy Wise',
-            headerName: 'Policy Wise',
-            width: 130,
-            editable: true,
-            renderCell: tenDigitValidator,
-            renderEditCell: (params) => (
-                <input
-                    type="text"
-                    value={params.value || ""}
-                    onChange={handlePolicyNumberChange}
-                />
-            ),
-        },
-        {
-            field: 'Client Name',
-            headerName: 'Date',
-            width: 130,
-            editable: true,
-            type: 'date'
-        },
-        {
-            field: 'Premium',
-            headerName: 'Premium',
-            width: 130,
-            editable: true,
-            renderCell: freePositiveNumber
-        },
-        {
-            field: 'Producer Code',
-            headerName: 'Producer Code',
-            width: 130,
+            field: 'age',
+            headerName: 'Age',
             type: 'number',
-            renderCell: tenDigitValidator
-        },
-        {
-            field: 'Producer Name',
-            headerName: 'Producer Name',
-            width: 130
-        },
-        {
-            field: 'Producer PAN',
-            headerName: 'Producer PAN',
-            width: 130
-        },
-        {
-            field: 'Channel',
-            headerName: 'Channel',
-            width: 130
-        },
-        {
-            field: 'Sub-Channel',
-            headerName: 'Sub-Channel',
-            width: 130
-        },
-        {
-            field: 'Branch Location',
-            headerName: 'Branch Location',
-            width: 130
-        },
-        {
-            field: 'Location Category',
-            headerName: 'Location Category',
-            width: 130
-        },
-        {
-            field: 'Prodcom Month',
-            headerName: 'Prodcom Month',
-            width: 130, editable: true
-        },
-        {
-            field: 'LOB1',
-            headerName: 'LOB1',
-            width: 130,
+            width: 80,
+            align: 'left',
+            headerAlign: 'left',
             editable: true,
-            type: "singleSelect",
-            valueOptions: ["pvtCar", "CV", "TW"]
         },
         {
-            field: 'Business Type',
-            headerName: 'Business Type',
-            width: 130,
+            field: 'joinDate',
+            headerName: 'Join date',
+            type: 'date',
+            width: 180,
             editable: true,
-            type: "singleSelect",
-            valueOptions: ["Brand New", "Roll Over", "Renewal"]
         },
         {
-            field: 'Segment',
-            headerName: 'Segment',
-            width: 130,
+            field: 'role',
+            headerName: 'Department',
+            width: 220,
             editable: true,
-            type: "singleSelect",
-            valueOptions: ["Compact", "Mpv_Suv", "Mid_Size", "Ultra_High_En_Min", "High_End", "Quadricycle",]
-        },
-        {
-            field: 'SectionText',
-            headerName: 'Section Text',
-            width: 130,
-            editable: true,
-            type: "singleSelect",
-            valueOptions: ["Package", "SAOD", "SATP"],
-        },
-        {
-            field: 'Approval Grid for OD Portion',
-            headerName: 'Approval Grid for OD Portion',
-            width: 130,
-            type: 'number',
-            renderCell: valueBetweenZeroToHundred,
-            editable: true,
-
-
-        },
-        {
-            field: 'Approval Grid for TP Portion',
-            headerName: 'Approval Grid for TP Portion',
-            width: 130,
-            renderCell: valueBetweenZeroToHundred,
-            type: 'number',
-            editable: true,
-
-        },
-        {
-            field: 'Approval Grid for Per Policy ',
-            headerName: 'Approval Grid for Per Policy ',
-            width: 130,
-            editable: true,
-            type: 'number',
-            renderCell: valueBetweenZeroToHundred,
+            type: 'singleSelect',
+            valueOptions: ['Market', 'Finance', 'Development'],
         },
         {
             field: 'actions',
@@ -286,77 +174,75 @@ export default function policyDataGrid() {
             width: 100,
             cellClassName: 'actions',
             getActions: ({ id }) => {
-                const commonAction = (
+                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+                if (isInEditMode) {
+                    return [
+                        <GridActionsCellItem
+                            icon={<SaveIcon />}
+                            label="Save"
+                            sx={{
+                                color: 'primary.main',
+                            }}
+                            onClick={handleSaveClick(id)}
+                        />,
+                        <GridActionsCellItem
+                            icon={<CancelIcon />}
+                            label="Cancel"
+                            className="textPrimary"
+                            onClick={handleCancelClick(id)}
+                            color="inherit"
+                        />,
+                    ];
+                }
+
+                return [
+                    <GridActionsCellItem
+                        icon={<EditIcon />}
+                        label="Edit"
+                        className="textPrimary"
+                        onClick={handleEditClick(id)}
+                        color="inherit"
+                    />,
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
                         onClick={handleDeleteClick(id)}
                         color="inherit"
-                    />
-                );
-                return [commonAction];
+                    />,
+                ];
             },
-
         },
     ];
 
-    function camelCaseToNormalText(inputString) {
-        return inputString.replace(/([a-z])([A-Z])/g, '$1 $2');
-    }
-
-    columns.map(function (element) {
-        const len = element.field.length;
-        element.width = len * 10;
-        element.headerName = camelCaseToNormalText(element.field)
-        return element; // Return the modified element
-    });
-
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box
-                sx={{
-                    height: 650,
-                    width: '100%',
-                    py: 5,
-                    // bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-                    '& .actions': {
-                        color: 'text.secondary',
-                    },
-                    '& .textPrimary': {
-                        color: 'text.primary',
-                    },
+        <Box
+            sx={{
+                height: 500,
+                width: '100%',
+                '& .actions': {
+                    color: 'text.secondary',
+                },
+                '& .textPrimary': {
+                    color: 'text.primary',
+                },
+            }}
+        >
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                editMode="row"
+                rowModesModel={rowModesModel}
+                onRowModesModelChange={handleRowModesModelChange}
+                onRowEditStop={handleRowEditStop}
+                processRowUpdate={processRowUpdate}
+                slots={{
+                    toolbar: EditToolbar,
                 }}
-            >
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    editMode="row"
-                    columnBuffer={Number.MAX_SAFE_INTEGER}
-                    columnThreshold={2}
-                    getRowHeight={() => 'auto'}
-                    cellModesModel={cellModesModel}
-                    onCellModesModelChange={handleCellModesModelChange}
-                    onCellClick={handleCellClick}
-                    slots={{ toolbar: EditToolbar, }}
-                    slotProps={{
-                        toolbar: { setRows, setRowModesModel },
-                    }}
-
-                />
-            </Box>
-            <Button
-                variant="contained"
-
-                style={{
-                    position: "absolute",
-                    padding: "10px 50px",
-                    margin: "68",
-                    right: "10px",
+                slotProps={{
+                    toolbar: { setRows, setRowModesModel },
                 }}
-            >
-                Submit
-            </Button>
-
+            />
         </Box>
     );
 }
