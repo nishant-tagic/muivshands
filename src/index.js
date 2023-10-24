@@ -19,7 +19,7 @@ const OPTIONS = [
 ];
 root.render(
   <React.StrictMode>
-    {/* <App />
+    {/* <App /> 
     <ValueGetterGrid />
     <App1 /> */}
     <h1>wefwf</h1>
