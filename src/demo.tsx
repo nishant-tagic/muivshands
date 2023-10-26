@@ -40,7 +40,7 @@ export function RHFMultiSelect({
     const { control } = useFormContext();
 
     const renderValues = (selectedIds: string[]) => {
-        const selectedIbn tems = options.filter((item) =>
+        const selectedIbn  tems = options.filter((item) =>
             selectedIds.includes(item.value)
         );
 
