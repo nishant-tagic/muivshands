@@ -50,7 +50,7 @@ export function RHFMultiSelect({
                     {placeholder}
                 </Box>
             );
-        }
+        } 
     
         if (chip) {
             return (
