@@ -51,7 +51,7 @@ export function RHFMultiSelect({
                 </Box>
             );
         }
-   
+    
         if (chip) {
             return (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
