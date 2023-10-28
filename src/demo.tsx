@@ -49,7 +49,7 @@ export function RHFMultiSelect({
                 <Box component="em" sx={{ color: "text.disabled" }}>
                     {placeholder}
                 </Box>
-            );
+            ); 
         } 
     
         if (chip) {
