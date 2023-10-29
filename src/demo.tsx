@@ -47,7 +47,7 @@ export function RHFMultiSelect({
         if (!selectedItems.length && placeholder) {
             return (
                 <Box component="em" sx={{ color: "text.disabled" }}>
-                    {placeholder}
+                    {placeholder} 
                 </Box>
             ); 
         } 
