@@ -58,7 +58,7 @@ export function RHFMultiSelect({
                     {selectedItems.map((item) => (
                         <Chip key={item.value} size="small" label={item.label} />
                     ))}
-                </Box>
+                </Box> 
             );
         }
 
