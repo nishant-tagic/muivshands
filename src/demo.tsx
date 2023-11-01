@@ -61,7 +61,7 @@ export function RHFMultiSelect({
                 </Box> 
             );
         }
- 
+   
         return selectedItems.map((item) => item.label).join(", ");
     };
 
