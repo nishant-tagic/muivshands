@@ -57,7 +57,7 @@ export function RHFMultiSelect({
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selectedItems.map((item) => (
                         <Chip key={item.value} size="small" label={item.label} />
-                    ))}
+                    ))}  
                 </Box> 
             );
         }
