@@ -1,68 +1,9 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbarContainer, useGridApiContext, GridEditSingleSelectCell, GridToolbarExport } from '@mui/x-data-grid';
+import { DataGrid,useGridApiRef, GridToolbarContainer, useGridApiContext, GridEditSingleSelectCell, GridToolbarExport } from '@mui/x-data-grid';
 import { policySpecificPvtCar } from './Data/data';
 
-const PremiumCell = ({ value, index, row, column }) => {
-    if (!/^\d{10}$/.test(value)) {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    } else {
-        return value;
-    }
-};
-
-const freePositiveNumber = ({ value, index, row, column }) => {
-    if (/^[1-9]\d*$/.test(value)) {
-        return value;
-    } else {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    }
-};
-
-const cellValidator = ({ value, index, row, column }) => {
-    const min = 0;
-    const max = 100;
-
-    if (value < min || value > max) {
-        return <span style={{ color: 'red' }}>{value}</span>;
-    } else {
-        return value;
-    }
-};
-
-const isCellEditable = (params) => {
-    if (
-        params.field === 'Approval Grid for OD Portion' &&
-        params.row.SectionText === 'SAOD'
-    ) {
-        return false;
-    }
-    return true;
-};
-
-
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarExport />
-        </GridToolbarContainer>
-    );
-}
-
-function CustomTypeEditComponent(props) {
-    const apiRef = useGridApiContext();
-
-    const handleValueChange = async () => {
-        await apiRef.current.setEditCellValue({
-            id: props.id,
-            field: 'Approval Grid for OD Portion',
-            value: '',
-        });
-    };
-
-    return <GridEditSingleSelectCell onValueChange={handleValueChange} {...props} />;
-}
 
 const columns = [
     {
@@ -70,7 +11,7 @@ const columns = [
         headerName: 'Policy Wise',
         width: 130,
         editable: "true",
-        renderCell: PremiumCell,
+        // renderCell: PremiumCell,
 
     },
     {
@@ -85,14 +26,14 @@ const columns = [
         headerName: 'Premium',
         width: 130,
         editable: true,
-        renderCell: freePositiveNumber
+        // renderCell: freePositiveNumber
     },
     {
         field: 'Producer Code',
         headerName: 'Producer Code',
         width: 130,
         type: 'number',
-        renderCell: PremiumCell
+        // renderCell: PremiumCell
     },
     {
         field: 'Producer Name',
@@ -160,38 +101,42 @@ const columns = [
         editable: true,
         type: "singleSelect",
         valueOptions: ["Package", "SAOD", "SATP"],
-        renderEditCell: (params) => <CustomTypeEditComponent {...params} />,
+        // renderEditCell: (params) => <CustomTypeEditComponent {...params} />,
     },
     {
         field: 'Approval Grid for OD Portion',
         headerName: 'Approval Grid for OD Portion',
         width: 130,
         type: 'number',
-        renderCell: cellValidator,
+        // renderCell: cellValidator,
         editable: ({ params }) => {
             return params.row.type === 'SAOD' ? true : false;
         },
     },
     {
-        field: 'Approval Grid for TP Portion',
+        field: 'Approval Grid for TP Portion ',
         headerName: 'Approval Grid for TP Portion',
         width: 130,
-        renderCell: cellValidator,
+        // renderCell: cellValidator,
         type: 'number',
         editable: true,
 
     },
     {
-        field: 'Approval Grid for Per Policy ',
+        field: 'Approval Grid for Per Policy',
         headerName: 'Approval Grid for Per Policy ',
         width: 130,
         editable: true,
         type: 'number',
-        renderCell: cellValidator,
+        // renderCell: cellValidator,
     }
 ];
 
 export default function ValueGetterGrid() {
+    const apiRef = useGridApiRef();
+    apiRef.current.updateRows([{ id: 1, }]);
+
+
 
     return (
         <Box sx={{
@@ -201,9 +146,6 @@ export default function ValueGetterGrid() {
             <DataGrid
                 rows={policySpecificPvtCar}
                 columns={columns}
-                slots={{ toolbar: CustomToolbar, }}
-                editMode="row"
-                isCellEditable={isCellEditable}
             />
         </Box>
     );
